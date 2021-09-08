@@ -1,6 +1,7 @@
 import sys
 import pandas as pd
 from sqlalchemy import create_engine
+import numpy as np
 
 
 def load_data(messages_filepath, categories_filepath):
@@ -49,7 +50,8 @@ def load_data(messages_filepath, categories_filepath):
     
 
 def clean_data(df):
-    """Remove duplicates and NaN values.
+    """Remove duplicates, NaN values and messages that are
+    too long.
 
     Parameters
     ---
@@ -67,6 +69,12 @@ def clean_data(df):
     df = df[df['related'] < 2]
     # drop null values
     df = df.dropna()
+    # drop long messages
+    messages_lens = np.array([len(i.split(' ')) for i in df['message']])
+    x = np.linspace(1, 200, 100)
+    cdf = np.array([np.mean(messages_lens < i) for i in x])
+    len_lim = np.ceil(x[cdf > .99][0])
+    df = df.iloc[messages_lens <= len_lim]
     return df
 
 
