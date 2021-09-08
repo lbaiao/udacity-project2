@@ -1,27 +1,108 @@
 import sys
+from sqlalchemy import create_engine
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.pipeline import Pipeline
+from sklearn.multioutput import MultiOutputClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, f1_score
+from sklearn.model_selection import GridSearchCV
+from pickle import dump
 
 
 def load_data(database_filepath):
-    pass
+    """Load the data from a SQLite database.
+
+    Parameters
+    ---
+    database_filepath: str
+        SQLite database filepath.
+
+    Returns
+    ---
+    X: pandas.DataFrame
+        Input data for the ML pipeline.
+    y: pandas.DataFrame
+        Target data for the ML pipeline.
+    y.columns: list
+        Messages' categories.
+    """
+    # load data from database
+    engine = create_engine(f'sqlite:///{database_filepath}')
+    df = pd.read_sql_table('InsertTableName', engine)
+    df = df.dropna()
+    X = df['message']
+    y = df.drop(columns=['id', 'message', 'genre'])
+    return X, y, y.columns
 
 
 def tokenize(text):
+    """Tokenizes the text. We do not use a custom tokenize
+    function, since the TfidfVectorizer object already
+    performs it, along with the TFIDF process.
+    """
     pass
 
 
 def build_model():
-    pass
+    """Build the ML pipeline and structures the
+    grid search process.
+
+    Returns
+    ---
+    cv: sklearn.model_selection.GridSearchCV
+        Grid search object for model training.
+    """
+    pipeline = Pipeline([
+        ('vect', TfidfVectorizer()),
+        ('clf', MultiOutputClassifier(estimator=DecisionTreeClassifier()))
+    ])
+    parameters = {
+        'clf__estimator__random_state': [0, 1]
+    }
+    cv = GridSearchCV(pipeline, param_grid=parameters,
+                      n_jobs=-1)
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
+    """Evaluate the trained model and print a report with
+    the accuracy, recall and f1 score metrics.
+
+    Parameters
+    ---
+    model: sklearn.model_selection.GridSearchCV
+        Grid search object with the fitted model.
+    X_test: pandas.DataFrame
+        Input data for testing.
+    Y_test: pandas.DataFrame
+        Target data for testing.
+    category_names: list[str]
+        List with the category names.
+    """
+    y_pred = model.predict(X_test)
+    print(classification_report(Y_test, y_pred,
+                                target_names=category_names))
 
 
 def save_model(model, model_filepath):
-    pass
+    """Saves the model to a pickle file.
+
+    Parameters
+    ---
+    model: sklearn.model_selection.GridSearchCV
+        Grid search object with the fitted model.
+    model_filepath: str
+        Pickle file path.
+    """
+    with open(model_filepath, 'wb') as f:
+        dump(model, f)
 
 
 def main():
+    """ Runs the ML pipeline."""
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
