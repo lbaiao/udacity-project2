@@ -2,19 +2,19 @@ import sys
 from sqlalchemy import create_engine
 import pandas as pd
 from sklearn.pipeline import Pipeline
-from sklearn.multioutput import MultiOutputClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, f1_score
+from sklearn.metrics import classification_report
 from sklearn.model_selection import GridSearchCV
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
 import nltk
 from pickle import dump
 
 
-nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger'])
+nltk.download(['punkt', 'wordnet', 'stopwords'])
 
 
 def load_data(database_filepath):
@@ -45,15 +45,28 @@ def load_data(database_filepath):
 
 def tokenize(text):
     """Tokenizes the text, by applying NLTK tokenization,
-    along with lemmatization.
+    along with lemmatization. It also removes symbols and
+    punctuation, along with stop words.
+
+    Parameters
+    ---
+    text: str
+        Text to be tokenized.
+
+    Returns
+    ---
+    clean_tokens: list[str]
+        Clean tokens extracted from `text`.
     """
     tokens = word_tokenize(text)
-    lemmatizer = WordNetLemmatizer()
+    lemmatizer = WordNetLemmatizer()    
+    stop_words = list(stopwords.words('english'))
 
     clean_tokens = []
     for tok in tokens:
         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
+        if clean_tok.isalpha() and clean_tok not in stop_words:            
+            clean_tokens.append(clean_tok)
 
     return clean_tokens
 
@@ -73,10 +86,10 @@ def build_model():
         ('clf', RandomForestClassifier())
     ])
     parameters = {
-        'clf__random_state': [0, 1]
+        'clf__criterion': ['gini', 'entropy']
     }
-    cv = GridSearchCV(pipeline, param_grid=parameters,
-                      n_jobs=-1)
+    cv = GridSearchCV(pipeline, param_grid=parameters)
+                      
     return cv
 
 
