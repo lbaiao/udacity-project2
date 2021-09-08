@@ -44,9 +44,8 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
-    """Tokenizes the text. We do not use a custom tokenize
-    function, since the TfidfVectorizer object already
-    performs it, along with the TFIDF process.
+    """Tokenizes the text, by applying NLTK tokenization,
+    along with lemmatization.
     """
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
