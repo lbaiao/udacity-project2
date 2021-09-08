@@ -1,15 +1,20 @@
 import sys
 from sqlalchemy import create_engine
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import Pipeline
 from sklearn.multioutput import MultiOutputClassifier
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, f1_score
 from sklearn.model_selection import GridSearchCV
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+import nltk
 from pickle import dump
+
+
+nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger'])
 
 
 def load_data(database_filepath):
@@ -43,7 +48,15 @@ def tokenize(text):
     function, since the TfidfVectorizer object already
     performs it, along with the TFIDF process.
     """
-    pass
+    tokens = word_tokenize(text)
+    lemmatizer = WordNetLemmatizer()
+
+    clean_tokens = []
+    for tok in tokens:
+        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+        clean_tokens.append(clean_tok)
+
+    return clean_tokens
 
 
 def build_model():
@@ -55,12 +68,13 @@ def build_model():
     cv: sklearn.model_selection.GridSearchCV
         Grid search object for model training.
     """
-    pipeline = Pipeline([
-        ('vect', TfidfVectorizer()),
-        ('clf', MultiOutputClassifier(estimator=DecisionTreeClassifier()))
+    pipeline = Pipeline([            
+        ('vect', CountVectorizer(tokenizer=tokenize)),
+        ('tfidf', TfidfTransformer()),    
+        ('clf', RandomForestClassifier())
     ])
     parameters = {
-        'clf__estimator__random_state': [0, 1]
+        'clf__random_state': [0, 1]
     }
     cv = GridSearchCV(pipeline, param_grid=parameters,
                       n_jobs=-1)
