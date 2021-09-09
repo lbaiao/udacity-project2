@@ -10,6 +10,7 @@ Our model was built to classify emergency messages into well-defined categories 
 
 # Libraries
 ---
+* python 3.9.5
 * flask 2.0.1
 * matplotlib 3.4.2
 * numpy 1.20.3
