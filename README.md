@@ -22,10 +22,13 @@ Our model was built to classify emergency messages into well-defined categories 
 
 # Files
 ---
-*app*: directory with the web app html files and the flask code.
-*data*: directory with the csv dataset files and some Jupyter notebooks that were used to prototype the ETL and ML pipelines. In this directory, you can also find the `process_data.py` which is an important script that runs the complete ETL pipeline. 
-*models*: directory with the `train_classifier.py` script, which runs the ML pipeline.
-*pictures*: hosts the pictures that appear in the README.md.
+**app**: directory with the web app html files and the flask code.
+
+**data**: directory with the csv dataset files and some Jupyter notebooks that were used to prototype the ETL and ML pipelines. In this directory, you can also find the `process_data.py` which is an important script that runs the complete ETL pipeline. 
+
+**models**: directory with the `train_classifier.py` script, which runs the ML pipeline.
+
+**pictures**: hosts the pictures that appear in the `README.md` file.
 
 
 # Instructions:
