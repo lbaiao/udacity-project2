@@ -130,3 +130,6 @@ dmypy.json
 
 # trash files
 *.tar.gz
+.vimspector.json
+*.pkl
+*.db
