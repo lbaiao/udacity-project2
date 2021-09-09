@@ -89,7 +89,7 @@ def build_model():
         ('clf', MultiOutputClassifier(estimator=RandomForestClassifier()))
     ])
     parameters = {
-        'clf__criterion': ['gini', 'entropy']
+        'clf__estimator__criterion': ['gini', 'entropy']
     }
     cv = GridSearchCV(pipeline, param_grid=parameters)
                       
