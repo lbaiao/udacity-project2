@@ -49,6 +49,6 @@ Our model was built to classify emergency messages into well-defined categories 
 ---
 The majority of the project's boilerplate code was provided by Udacity, as a base template.
 
-The ETL and ML pipelines, along with two of the three visuals, were written by the author's project. Some inspiration was taken from [sarasun97](https://github.com/sarasun97/disaster_response_classification_pipeline).
+The ETL and ML pipelines, along with two of the three visuals, were written by the project's author. Some inspiration was taken from [sarasun97](https://github.com/sarasun97/disaster_response_classification_pipeline).
 
 At last, the data was provided by [Figure Eight](https://appen.com/).
