@@ -22,7 +22,10 @@ Our model was built to classify emergency messages into well-defined categories 
 
 # Files
 ---
-asdasd
+*app*: directory with the web app html files and the flask code.
+*data*: directory with the csv dataset files and some Jupyter notebooks that were used to prototype the ETL and ML pipelines. In this directory, you can also find the `process_data.py` which is an important script that runs the complete ETL pipeline. 
+*models*: directory with the `train_classifier.py` script, which runs the ML pipeline.
+*pictures*: hosts the pictures that appear in the README.md.
 
 
 # Instructions:
@@ -38,3 +41,11 @@ asdasd
     `python run.py`
 
 3. Go to http://0.0.0.0:3001/
+
+# Acknowledgments 
+---
+The majority of the project's boilerplate code was provided by Udacity, as a base template.
+
+The ETL and ML pipelines, along with two of the three visuals, were written by the author's project. Some inspiration was taken from [sarasun97](https://github.com/sarasun97/disaster_response_classification_pipeline).
+
+At last, the data was provided by [Figure Eight](https://appen.com/).
