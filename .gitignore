@@ -132,4 +132,4 @@ dmypy.json
 *.tar.gz
 .vimspector.json
 *.pkl
-database1.db
+InsertDatabaseName.db
