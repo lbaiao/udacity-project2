@@ -3,15 +3,17 @@ from sqlalchemy import create_engine
 import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.multioutput import MultiOutputClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from sklearn.model_selection import GridSearchCV
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from stopwords import get_stopwords
+from pickle import dump
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import nltk
-from pickle import dump
 
 
 nltk.download(['punkt', 'wordnet', 'stopwords'])
@@ -59,17 +61,18 @@ def tokenize(text):
         Clean tokens extracted from `text`.
     """
     tokens = word_tokenize(text)
-    lemmatizer = WordNetLemmatizer()    
-    stop_words = list(stopwords.words('english'))
-
+    lemmatizer = WordNetLemmatizer()        
+    nltk_stop_words = list(stopwords.words('english')) # About 150 stopwords
+    stop_words = list(get_stopwords('en'))
+    stop_words.extend(nltk_stop_words)
+    
     clean_tokens = []
     for tok in tokens:
         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        if clean_tok.isalpha() and clean_tok not in stop_words:            
+        if clean_tok.isalpha() and clean_tok not in stop_words:                        
             clean_tokens.append(clean_tok)
 
-    return clean_tokens
-
+    return clean_tokens    
 
 def build_model():
     """Build the ML pipeline and structures the
@@ -83,7 +86,7 @@ def build_model():
     pipeline = Pipeline([            
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),    
-        ('clf', RandomForestClassifier())
+        ('clf', MultiOutputClassifier(estimator=RandomForestClassifier()))
     ])
     parameters = {
         'clf__criterion': ['gini', 'entropy']
